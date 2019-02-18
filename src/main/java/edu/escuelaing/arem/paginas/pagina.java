@@ -22,11 +22,16 @@ public class pagina {
         System.out.println(tipo(archivo));
         try{
             if(archivo.equals("/") ||tipo.equals("html")){
+                System.out.print("eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
             solicitudHtml( out, archivo);
             }else if(tipo.equals("png")){
                 solicitudPng(archivo,imageCode);
+            }else{
+                 solicitudHtml( out, "/notfound.html");
             }
+            
         }catch(Exception e){
+              
             solicitudHtml( out, "/notfound.html");
         }
         
@@ -35,10 +40,23 @@ public class pagina {
     private static void solicitudHtml(PrintWriter out,String archivo) throws IOException{
         String outputLine="";
         String sCadena="";
-        BufferedReader bf = new BufferedReader(new FileReader("resourses"+archivo));
-            while ((sCadena = bf.readLine())!=null) {
+        try{
+            BufferedReader bf=null;
+            if(archivo.equals("/")){
+                bf = new BufferedReader(new FileReader("resourses/notfound.html"));
+                System.out.print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+            }else{
+                bf = new BufferedReader(new FileReader("resourses"+archivo));
+            }
+             while ((sCadena = bf.readLine())!=null) {
                     outputLine+=sCadena;
                  }
+        }catch(Exception e){
+             BufferedReader bf = new BufferedReader(new FileReader("resourses/notfound.html"));
+             while ((sCadena = bf.readLine())!=null) {
+                    outputLine+=sCadena;
+                 }
+        }
             out.println("HTTP/1.1 200 OK");
             out.println("Content-Type: text/html" + "\r\n");
             out.println(outputLine);

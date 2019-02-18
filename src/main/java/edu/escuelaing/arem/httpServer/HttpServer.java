@@ -45,6 +45,7 @@ public class HttpServer {
                         
                         in.close();
                         out.close();
+                        imageCode.close();
                         clientSocket.close();
                        
 		}
