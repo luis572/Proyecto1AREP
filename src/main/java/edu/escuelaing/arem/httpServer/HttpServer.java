@@ -19,7 +19,7 @@ import java.io.*;
 public class HttpServer {
     public static void main(String[] args) throws IOException {
        
-	while(true==true) {       
+	for(;;) {       
                         ServerSocket serverSocket=SocketServidor.servidor();
                         Socket clientSocket = Socketcliente.servidor(serverSocket);
 			PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
