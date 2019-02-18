@@ -19,7 +19,7 @@ import java.io.*;
 public class HttpServer {
     public static void main(String[] args) throws IOException {
        
-	for (;;) {       
+	while(true==true) {       
                         ServerSocket serverSocket=SocketServidor.servidor();
                         Socket clientSocket = Socketcliente.servidor(serverSocket);
 			PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
@@ -42,10 +42,9 @@ public class HttpServer {
                         }catch(Exception e){
                             pagina.tipoArchivo("/index.html",out,imageCode);
                         }
-                        
-                        in.close();
-                        out.close();
                         imageCode.close();
+                        out.close();
+                        in.close();
                         clientSocket.close();
                         serverSocket.close();
 		}
