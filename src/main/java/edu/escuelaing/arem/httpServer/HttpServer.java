@@ -13,12 +13,19 @@ import java.io.*;
 
 
 /**
- *
- * @author 2137497
+ * Declaracion de la clase HttpServer,
+ * main principal del proyecto, desde donde corre el servidor
+ * @author Luis Pizza
  */
 public class HttpServer {
     private static ServerSocket serverSocket;
-     private static Socket clientSocket;
+    private static Socket clientSocket;
+    
+    /**
+     * Creacion del main, que ejecutara todo el proyecto
+     * @param args
+     * @throws IOException 
+     */
     public static void main(String[] args) throws IOException {
         clientSocket=null;
         serverSocket=null;

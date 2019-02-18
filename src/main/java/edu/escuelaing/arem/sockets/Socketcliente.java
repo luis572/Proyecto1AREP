@@ -11,7 +11,10 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 /**
- *
+ * Declaracion de la clase ClientSckt,
+ * socket, se comunica con el servidor,
+ * le envia peticiones
+ * recibe respuestas
  * @author Luis
  */
 public class Socketcliente {

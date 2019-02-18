@@ -13,10 +13,20 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
 /**
- *
+ * Declaracion de la clase pagina,
+ * genera la salida del request solicitado por el cliente 
+ * despues de haber generado la respectiva pagina correspondiente al tipo solicitada 
+ * muestra la pagina web visualizada en el servidor
  * @author Luis
  */
 public class pagina {
+    /**
+     * Dada la solicitud del cliente, este evaluara su tipo de archivo y con esta 
+     * informacion solicitara la pagina correspondiente a este arhivo
+     * @param archivo se debe de conocer el archivo solicitado por el cliente
+     * @param clientSocket se debe conocer desde que socket se esta haciendo la solicitud
+     * @throws IOException se estan leyendo archivos
+     */
     public static void tipoArchivo(String archivo,Socket clientSocket) throws IOException{
         System.out.println("ADRESS POSTTYPE:" + archivo);
         String tipo=tipo(archivo);
@@ -38,6 +48,13 @@ public class pagina {
         
         
     }
+    /**
+     * lee una pagina web .html ubicada en una direccion y parsea su contenido a un string
+     * colocando encabezados y enviando la informacion a el cliente  
+     * @param clientSocket se debe conocer desde que socket se esta haciendo la solicitud
+     * @param archivo se debe de conocer el archivo solicitado por el cliente
+     * @throws IOException se estan leyendo archivos
+     */
     private static void solicitudHtml(String archivo, Socket clientSocket) throws IOException{
         String outputLine="";
         String sCadena="";
@@ -65,6 +82,13 @@ public class pagina {
             out.println(outputLine);
             out.close();
     }
+    /**
+     * lee una pagina web .png ubicada en una direccion y parsea su contenido a un string
+     * colocando encabezados y enviando la informacion a el cliente  
+     * @param clientSocket se debe conocer desde que socket se esta haciendo la solicitud
+     * @param archivo se debe de conocer el archivo solicitado por el cliente
+     * @throws IOException se estan leyendo archivos
+     */
     private static void solicitudPng(String archivo,Socket clientSocket) throws IOException{
         			
         DataOutputStream imageCode= new DataOutputStream(clientSocket.getOutputStream());  
@@ -82,6 +106,12 @@ public class pagina {
         imageCode.close();
          imageCode.close();
     }
+    /**
+     * dado una  pagina solicitada este metodo retornara el tipo a la que corresponde dicha 
+     * solicitud 
+     * @param pagina string con el nombre de la solicitud de una pagina 
+     * @throws IOException se estan leyendo archivos
+     */
     private static String tipo(String pagina){
         try{
             String tipo="";
