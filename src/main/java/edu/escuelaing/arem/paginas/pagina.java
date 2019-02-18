@@ -22,8 +22,7 @@ public class pagina {
         System.out.println(tipo(archivo));
         try{
             if(archivo.equals("/") ||tipo.equals("html")){
-                System.out.print("eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
-            solicitudHtml( out, archivo);
+                solicitudHtml( out, archivo);
             }else if(tipo.equals("png")){
                 solicitudPng(archivo,imageCode);
             }else{
@@ -44,7 +43,7 @@ public class pagina {
             BufferedReader bf=null;
             if(archivo.equals("/")){
                 bf = new BufferedReader(new FileReader("resourses/notfound.html"));
-                System.out.print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+                
             }else{
                 bf = new BufferedReader(new FileReader("resourses"+archivo));
             }

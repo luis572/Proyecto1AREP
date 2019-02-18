@@ -18,9 +18,9 @@ import java.io.*;
  */
 public class HttpServer {
     public static void main(String[] args) throws IOException {
-       ServerSocket serverSocket=SocketServidor.servidor();
+       
 	for (;;) {       
-                        
+                        ServerSocket serverSocket=SocketServidor.servidor();
                         Socket clientSocket = Socketcliente.servidor(serverSocket);
 			PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
                         DataOutputStream imageCode= new DataOutputStream(clientSocket.getOutputStream());            
@@ -47,7 +47,7 @@ public class HttpServer {
                         out.close();
                         imageCode.close();
                         clientSocket.close();
-                       
+                        serverSocket.close();
 		}
 	}
     	public static String getPageRequest(InputStream is) throws IOException {
