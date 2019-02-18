@@ -17,15 +17,16 @@ import java.io.*;
  * @author 2137497
  */
 public class HttpServer {
+    private static ServerSocket serverSocket;
+     private static Socket clientSocket;
     public static void main(String[] args) throws IOException {
-       
-	for(;;) {       
-                        ServerSocket serverSocket=SocketServidor.servidor();
-                        Socket clientSocket = Socketcliente.servidor(serverSocket);
-			PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
-                        DataOutputStream imageCode= new DataOutputStream(clientSocket.getOutputStream());            
+        clientSocket=null;
+        serverSocket=null;
+	while(true==true) {       
+                        serverSocket=SocketServidor.servidor();
+                        clientSocket = Socketcliente.servidor(serverSocket);
 			BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-			String inputLine;
+			String inputLine="";
                         String[] get = null;
 			while ((inputLine = in.readLine()) != null) {
 				System.out.println("Received: " + inputLine);
@@ -38,12 +39,10 @@ public class HttpServer {
                             }
 			}
                         try{
-                            pagina.tipoArchivo(get[1],out,imageCode);
+                            pagina.tipoArchivo(get[1],clientSocket);
                         }catch(Exception e){
-                            pagina.tipoArchivo("/index.html",out,imageCode);
+                            pagina.tipoArchivo("/index.html",clientSocket);
                         }
-                        imageCode.close();
-                        out.close();
                         in.close();
                         clientSocket.close();
                         serverSocket.close();

@@ -11,34 +11,38 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.Socket;
 /**
  *
  * @author Luis
  */
 public class pagina {
-    public static void tipoArchivo(String archivo,PrintWriter out,DataOutputStream imageCode) throws IOException{
+    public static void tipoArchivo(String archivo,Socket clientSocket) throws IOException{
         System.out.println("ADRESS POSTTYPE:" + archivo);
         String tipo=tipo(archivo);
         System.out.println(tipo(archivo));
         try{
             if(archivo.equals("/") ||tipo.equals("html")){
-                solicitudHtml( out, archivo);
+                solicitudHtml( archivo,clientSocket);
             }else if(tipo.equals("png")){
-                solicitudPng(archivo,imageCode);
+                solicitudPng(archivo,clientSocket);
             }else{
-                 solicitudHtml( out, "/notfound.html");
+                 solicitudHtml("/notfound.html",clientSocket);
             }
             
         }catch(Exception e){
               
-            solicitudHtml( out, "/notfound.html");
+            solicitudHtml( "/notfound.html",clientSocket);
         }
         
         
+        
     }
-    private static void solicitudHtml(PrintWriter out,String archivo) throws IOException{
+    private static void solicitudHtml(String archivo, Socket clientSocket) throws IOException{
         String outputLine="";
         String sCadena="";
+        PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+                       
         try{
             BufferedReader bf=null;
             if(archivo.equals("/")){
@@ -59,8 +63,11 @@ public class pagina {
             out.println("HTTP/1.1 200 OK");
             out.println("Content-Type: text/html" + "\r\n");
             out.println(outputLine);
+            out.close();
     }
-    private static void solicitudPng(String archivo, DataOutputStream imageCode) throws IOException{
+    private static void solicitudPng(String archivo,Socket clientSocket) throws IOException{
+        			
+        DataOutputStream imageCode= new DataOutputStream(clientSocket.getOutputStream());  
         byte[] imageBytes = null;
         File image = new File("resourses"+archivo);
         FileInputStream inputImage = new FileInputStream(image);
@@ -73,6 +80,7 @@ public class pagina {
         //hace visible la imagen en el servidor
         imageCode.write(imageBytes);            
         imageCode.close();
+         imageCode.close();
     }
     private static String tipo(String pagina){
         try{
