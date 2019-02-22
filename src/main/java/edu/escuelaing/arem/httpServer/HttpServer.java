@@ -10,6 +10,13 @@ import edu.escuelaing.arem.sockets.SocketServidor;
 import edu.escuelaing.arem.sockets.Socketcliente;
 import java.net.*;
 import java.io.*;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 /**
@@ -20,7 +27,7 @@ import java.io.*;
 public class HttpServer {
     private static ServerSocket serverSocket;
     private static Socket clientSocket;
-    
+    public static HashMap<String, Method> metod;
     /**
      * Creacion del main, que ejecutara todo el proyecto
      * @param args
@@ -28,9 +35,9 @@ public class HttpServer {
      */
     public static void main(String[] args) throws IOException {
         clientSocket=null;
-        serverSocket=null;
-	while(true==true) {       
-                        serverSocket=SocketServidor.servidor();
+        serverSocket=SocketServidor.servidor();
+	while(true==true) {
+                        reconocerPojos();
                         clientSocket = Socketcliente.servidor(serverSocket);
 			BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 			String inputLine="";
@@ -45,14 +52,23 @@ public class HttpServer {
                                     System.out.println("Adress to show: "+ get[1]);
                             }
 			}
+                         ArrayList<String> values=new ArrayList<>();
+                         
                         try{
-                            pagina.tipoArchivo(get[1],clientSocket);
+                            if(get[1].contains(":")){
+                                String[] variables=get[1].split(":");
+                                for(int i=1;i<variables.length;i++){
+                                    values.add(variables[i]);
+                                }
+                                get[1]=get[1].split(":")[0];
+                            }
+                            pagina.tipoArchivo(get[1],clientSocket,metod,values);
                         }catch(Exception e){
-                            pagina.tipoArchivo("/index.html",clientSocket);
+                            pagina.tipoArchivo("/index.html",clientSocket,metod,values);
                         }
+                        
                         in.close();
                         clientSocket.close();
-                        serverSocket.close();
 		}
 	}
     	public static String getPageRequest(InputStream is) throws IOException {
@@ -72,6 +88,36 @@ public class HttpServer {
 	}
     
     
+    public static void listarFicherosPorCarpeta(final File carpeta,String e) throws ClassNotFoundException {
+        metod=new HashMap<String ,Method >();
+        for (final File ficheroEntrada : carpeta.listFiles()) {
+            String g=e;
+            String a="";
+            g=g.replace("/",".");
+            String namefichero=ficheroEntrada.getName().substring(0,ficheroEntrada.getName().length()-5);
+            a=g.substring(14,g.length());
+            Class c=Class.forName(a+namefichero);
+            Method[] metodos=c.getDeclaredMethods();
+            for(int i=0;i<metodos.length;i++){
+                Annotation[] tipo=metodos[i].getDeclaredAnnotations();
+                if(tipo.length>0){
+                    String an=tipo[0].toString().substring(31,tipo[0].toString().length());
+                    String llave=an.substring(10,an.length()-1);
+                    if(an.contains("web") && !metod.containsKey(llave)){
+                        metod.put(llave,metodos[i]);
+                    } 
+                }
+            }  
+        } 
+    }
+    public static void reconocerPojos(){
+        File carpeta = new File("src/main/java/edu/escuelaing/arem/framework/");
+           try {
+               listarFicherosPorCarpeta(carpeta,"src/main/java/edu/escuelaing/arem/framework/");
+           } catch (ClassNotFoundException ex) {
+               Logger.getLogger(HttpServer.class.getName()).log(Level.SEVERE, null, ex);
+           }
+    }
     
  }
 

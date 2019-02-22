@@ -11,7 +11,11 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.HashMap;
 /**
  * Declaracion de la clase pagina,
  * genera la salida del request solicitado por el cliente 
@@ -27,18 +31,33 @@ public class pagina {
      * @param clientSocket se debe conocer desde que socket se esta haciendo la solicitud
      * @throws IOException se estan leyendo archivos
      */
-    public static void tipoArchivo(String archivo,Socket clientSocket) throws IOException{
+    public static void tipoArchivo(String archivo,Socket clientSocket,HashMap metod, ArrayList<String> variables) throws IOException{
         System.out.println("ADRESS POSTTYPE:" + archivo);
         String tipo=tipo(archivo);
+        Boolean condicion=false;
+        for (Object key : metod.keySet()) {
+                if(archivo.equals(key)){
+                    condicion=true;
+                }
+            }
         System.out.println(tipo(archivo));
         try{
             if(archivo.equals("/") ||tipo.equals("html")){
                 solicitudHtml( archivo,clientSocket);
             }else if(tipo.equals("png")){
                 solicitudPng(archivo,clientSocket);
+            }else if(condicion){
+                Method e=(Method) metod.get(archivo);
+                if(e.getParameterCount()==variables.size()){
+                    appWeb(clientSocket,(Method) metod.get(archivo),variables);
+                }else{
+                    solicitudHtml("/notfound.html",clientSocket);
+                }
+                
             }else{
                  solicitudHtml("/notfound.html",clientSocket);
             }
+                 
             
         }catch(Exception e){
               
@@ -128,5 +147,39 @@ public class pagina {
         }catch(Exception e){
             return "html";
         }
+    }
+    private static void appWeb(Socket clientSocket,Method metod, ArrayList<String> variables) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IOException {
+
+        //getParameterCount
+        String Respuesta=Respuesta(metod,variables);
+        PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+        out.println("HTTP/1.1 200 OK");
+        out.println("Content-Type: text/html" + "\r\n");
+        out.println("<!DOCTYPE html>" + "\r\n");
+        out.println("<html>" + "\r\n");
+        out.println("<head>" + "\r\n");
+        out.println("<meta charset=\"UTF-8\">" + "\r\n");
+        out.println("<title>Title of the document</title>" + "\r\n");
+        out.println("</head>" + "\r\n");
+        out.println("<body>" + "\r\n");
+        out.println(Respuesta+"\r\n");
+        out.println("</body>" + "\r\n");
+        out.println("</html>" + "\r\n");
+        out.close();
+	}
+    private static String Respuesta(Method metod, ArrayList<String> variables)throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+        switch (metod.getParameterCount()) {
+            case 1:
+                return (String) metod.invoke(null, variables.get(0));
+            case 2:
+                return (String) metod.invoke(null, variables.get(0),variables.get(1));
+            default:
+                break;
+        }
+        {
+            return (String) metod.invoke(null, variables.get(0),variables.get(1),variables.get(2));
+        }
+        
+       
     }
 }
