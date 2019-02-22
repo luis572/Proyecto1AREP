@@ -69,8 +69,6 @@ public class HttpServer {
                         
                         in.close();
                         clientSocket.close();
-                        serverSocket.close();
-                        serverSocket=SocketServidor.servidor();
 		}
 	}
     	public static String getPageRequest(InputStream is) throws IOException {
