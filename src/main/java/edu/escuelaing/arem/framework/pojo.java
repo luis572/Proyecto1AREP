@@ -28,4 +28,10 @@ public class pojo {
         int  respuesta2=Integer.parseInt(n2);
         return Integer.toString(respuesta+respuesta2);
     }
+    @web("/sumacuadrados")
+    public static String sumacuadrados(String n,String n2){
+        int  respuesta=Integer.parseInt(n);
+        int  respuesta2=Integer.parseInt(n2);
+        return Integer.toString(respuesta*respuesta+respuesta2*respuesta2);
+    }
 }

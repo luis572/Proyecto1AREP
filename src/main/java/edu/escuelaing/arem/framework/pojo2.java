@@ -18,4 +18,12 @@ public class pojo2 {
         respuesta=respuesta*respuesta;
         return Integer.toString(respuesta);
     }
-}
+    @web("/concatenar")
+    public static String concatenar(String n, String n2){
+        return n+n2;
+    }
+    @web("/longitud")
+    public static String longitud(String n){
+        return Integer.toString(n.length());
+    }
+ }
