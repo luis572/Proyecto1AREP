@@ -29,7 +29,8 @@ public class pagina {
      * informacion solicitara la pagina correspondiente a este arhivo
      * @param archivo se debe de conocer el archivo solicitado por el cliente
      * @param clientSocket se debe conocer desde que socket se esta haciendo la solicitud
-     * @throws IOException se estan leyendo archivos
+     * @param HashMap se debe de conocer los metodos asociados a una peticion de un aplicacion  web apartir de pojos si este es el caso.
+     * @param ArrayList<String>  se debe de conocer los parametros  asociados a un metodo dado una  peticion de un aplicacion   web apartir de pojos si este es el caso.
      */
     public static void tipoArchivo(String archivo,Socket clientSocket,HashMap metod, ArrayList<String> variables) throws IOException{
         System.out.println("ADRESS POSTTYPE:" + archivo);
@@ -148,6 +149,13 @@ public class pagina {
             return "html";
         }
     }
+    /**
+     * dada una peticion apartir de pojos a nuestro servidor web esta clase se  encargara de hacer la respectiva pagina la salia asociada al metodo llamado
+     * @param clientSocket se debe conocer desde que socket se esta haciendo la solicitud
+     * @param Method se debe conocer el metodo que esta asociado a la peticion http
+     * @param ArrayList<String> se deben de conocer los parametros del metodo asociado a la peticion http 
+     * @throws IOException,IllegalAccessException, IllegalArgumentException, InvocationTargetException se estan leyendo archivos
+     */
     private static void appWeb(Socket clientSocket,Method metod, ArrayList<String> variables) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IOException {
 
         //getParameterCount
@@ -167,6 +175,12 @@ public class pagina {
         out.println("</html>" + "\r\n");
         out.close();
 	}
+    /**
+     * examinara el numero de parametros que tiene el metodo solicitado, lo invocara y retornara la salida de dicho metodo. 
+     * @param Method se debe conocer el metodo que esta asociado a la peticion http
+     * @param ArrayList<String> se deben de conocer los parametros del metodo asociado a la peticion http 
+     * @throws IOException,IllegalAccessException, IllegalArgumentException, InvocationTargetException se estan leyendo archivos
+     */
     private static String Respuesta(Method metod, ArrayList<String> variables)throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         switch (metod.getParameterCount()) {
             case 1:

@@ -52,25 +52,26 @@ public class HttpServer {
                                     System.out.println("Adress to show: "+ get[1]);
                             }
 			}
-                         ArrayList<String> values=new ArrayList<>();
+                         ArrayList<String> parametrosMetodo=new ArrayList<>();
                          
                         try{
                             if(get[1].contains(":")){
                                 String[] variables=get[1].split(":");
                                 for(int i=1;i<variables.length;i++){
-                                    values.add(variables[i]);
+                                    parametrosMetodo.add(variables[i]);
                                 }
                                 get[1]=get[1].split(":")[0];
                             }
-                            pagina.tipoArchivo(get[1],clientSocket,metod,values);
+                            pagina.tipoArchivo(get[1],clientSocket,metod,parametrosMetodo);
                         }catch(Exception e){
-                            pagina.tipoArchivo("/index.html",clientSocket,metod,values);
+                            pagina.tipoArchivo("/index.html",clientSocket,metod,parametrosMetodo);
                         }
                         
                         in.close();
                         clientSocket.close();
 		}
 	}
+    
     	public static String getPageRequest(InputStream is) throws IOException {
 		is.mark(0);
 		BufferedReader in = new BufferedReader(new InputStreamReader(is));
@@ -87,16 +88,22 @@ public class HttpServer {
 		return "path";
 	}
     
-    
-    public static void listarFicherosPorCarpeta(final File carpeta,String e) throws ClassNotFoundException {
+    /**
+     * esta clase almacenara todos los pojos con anotacion @web de un directorio dentro de un hashmap la lleve sera la extencion de la
+     * anotacion y el valor el metodo asociado a dicha anotacioa.
+     * @param File se debera de enviar la carpeta donde estara todos los pojos
+     * @param String para mayor facilidad se debe de conocer la ruta relativa de la carpeta en donde se van a extraer los metodos con anotacion web
+     * @throws ClassNotFoundException 
+     */
+    public static void listarFicherosPorCarpeta(final File carpeta,String ruta) throws ClassNotFoundException {
         metod=new HashMap<String ,Method >();
         for (final File ficheroEntrada : carpeta.listFiles()) {
-            String g=e;
-            String a="";
-            g=g.replace("/",".");
+            String copiaRuta=ruta;
+            String paquete="";
+            copiaRuta=copiaRuta.replace("/",".");
             String namefichero=ficheroEntrada.getName().substring(0,ficheroEntrada.getName().length()-5);
-            a=g.substring(14,g.length());
-            Class c=Class.forName(a+namefichero);
+            paquete=copiaRuta.substring(14,copiaRuta.length());
+            Class c=Class.forName(paquete+namefichero);
             Method[] metodos=c.getDeclaredMethods();
             for(int i=0;i<metodos.length;i++){
                 Annotation[] tipo=metodos[i].getDeclaredAnnotations();
@@ -110,6 +117,10 @@ public class HttpServer {
             }  
         } 
     }
+    /**
+     * entra al paquete framework y examinara todas las clases que esten en dicho directorios para llamar
+     * a listar ficheros por carpeta que evaluara archivo por archivo. 
+     */
     public static void reconocerPojos(){
         File carpeta = new File("src/main/java/edu/escuelaing/arem/framework/");
            try {
